@@ -1,0 +1,130 @@
+﻿@model BasketWebPanel.ViewModels.ProfileViewModel
+@{
+    /**/
+
+    ViewBag.Title = "UserProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="alert alert-success" id="success-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong></strong><span>Profile has been updated</span>
+            </div>
+            <div class="alert alert-error" id="error-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Error! </strong> <span> </span>
+            </div>
+            <div class="x_panel">
+                <div class="x_title">
+
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <input type="hidden" id="hdnRole" value="@Model.Role">
+                    <style>
+                        input[type=number]::-webkit-inner-spin-button,
+                        input[type=number]::-webkit-outer-spin-button {
+                            -webkit-appearance: none;
+                            -moz-appearance: none;
+                            appearance: none;
+                            margin: 0;
+                        }
+                    </style>
+                    @using (Html.BeginForm("UserProfile", "Account", FormMethod.Post, new { Id = "UpdateProfile" }))
+
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.Id)
+                        <div class="row">
+                            <div class="col-md-6 col-xs-6">
+                                <label>First Name</label>
+                                @Html.TextBoxFor(x => x.FirstName, new { @autofocus = "", @class = "form-control", id = "FirstName", @placeholder = "First Name" })
+                                @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 col-xs-6">
+                                <label>Last Name</label>
+                                @Html.TextBoxFor(x => x.LastName, new { @class = "form-control", id = "LastName", @placeholder = "Last Name" })
+                                @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-inline  ">
+                                    <label class="control-label" title="">Profile Picture</label>
+                                    <div class="input-group image-preview">
+                                        <input type="text" class="form-control image-preview-filename" disabled="disabled"> <!-- don't give a name === doesn't send on POST/GET -->
+                                        <span class="input-group-btn">
+                                            <!-- image-preview-clear button -->
+                                            <button type="button" id="clearImage" class="btn btn-default image-preview-clear" onclick="ClearImage()" style="display:none;">
+                                                <span class="glyphicon glyphicon-remove"></span> Clear
+                                            </button>
+                                            <!-- image-preview-input -->
+                                            <div class="btn btn-default image-preview-input">
+                                                <span class="glyphicon glyphicon-folder-open"></span>
+                                                <span class="image-preview-input-title">Browse</span>
+                                                <input type="file" accept="image/png, image/jpeg, image/gif" onchange="UploadImage()" id="fileInput" name="Image" /> <!-- rename it -->
+                                            </div>
+                                        </span>
+                                    </div><!-- /input-group image-preview [TO HERE]-->
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-xs-6">
+                                <label>Phone Number</label>
+                                @Html.TextBoxFor(x => x.Phone, new { @class = "form-control", id = "Phone", @placeholder = "Phone" })
+                                @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12 col-sm-12 col-xs-12 text-right" style="margin-top:20px;">
+                                <button id="btnReset" onclick="ClearValidationErrorMessages()" class="btn btn-primary" type="reset">Reset</button>
+                                <button type="button" onclick="updateProfile()" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function UploadImage() {
+        var formdata = new FormData(); //FormData object
+        var fileInput = document.getElementById('fileInput');
+        //Iterating through each files selected in fileInput
+        for (i = 0; i < fileInput.files.length; i++) {
+            //Appending each file to FormData object
+            formdata.append(fileInput.files[i].name, fileInput.files[i]);
+        }
+        //Creating an XMLHttpRequest and sending
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/Account/UploadImage');
+        xhr.send(formdata);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                //alert(xhr.responseText);
+            }
+        }
+        return false;
+    }
+
+    function updateProfile() {
+        $.ajax({
+            url: "/Account/UserProfile",
+            method: "POST",
+            data: $("#UpdateProfile").serialize(),
+            success: function (response) {
+                if (response.success) {
+                }
+            }
+        });
+    }
+
+    function ClearImage() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/Account/DeleteImage');
+        xhr.send("Clear");
+    }
+</script>

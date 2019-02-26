@@ -1,0 +1,99 @@
+﻿@model BasketWebPanel.ViewModels.AddNewPostViewModel
+@{
+    ViewBag.Title = "Post";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="alert alert-error" id="error-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Error! </strong> <span> </span>
+            </div>
+            @using (Ajax.BeginForm("Index", "Posts", new AjaxOptions { OnSuccess = "OnSuccessPostInsertion", OnFailure = "OnFailedInsertion", LoadingElementId = "divLoader" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Add New Post</h2>
+                        <div class="pull-right">
+                            <button type="submit" id="btnSavePost" class="btn btn-success"><i class="fa fa-plus-square"></i>  Save </button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-xs-12">
+                                <!-- image-preview-filename input [CUT FROM HERE]-->
+                                @*@if (Model.Product.Id == 0)
+                                    {*@
+                                <div id="UploadImage">
+                                    <label>Upload Image</label>
+                                    <div>
+                                        <div class="input-group image-preview" style="margin-bottom:0px">
+                                            <input type="text" name="ImageUrl" id="txtImageUrl" data-val="true" data-val-required="Please select an image" class="form-control image-preview-filename input-validation-error" readonly> <!-- don't give a name === doesn't send on POST/GET -->
+                                            <span class="input-group-btn">
+                                                <!-- image-preview-clear button -->
+                                                <button type="button" id="clearImage" class="btn btn-default image-preview-clear" onclick="ClearImage()" style="display:none;">
+                                                    <span class="glyphicon glyphicon-remove"></span> Clear
+                                                </button>
+                                                <!-- image-preview-input -->
+                                                <div class="btn btn-default image-preview-input">
+                                                    <span class="glyphicon glyphicon-folder-open"></span>
+                                                    <span class="image-preview-input-title">Browse</span>
+                                                    <input type="file" accept="image/png, image/jpeg, image/gif" onchange="UploadImage()" id="fileInput" name="Image" /> <!-- rename it -->
+                                                </div>
+                                            </span>
+                                        </div>
+                                        @Html.ValidationMessageFor(m => m.ImageUrl, "", new { @class = "text-danger", @Id = "errImageUrl" })
+                                    </div>
+                                    <!-- /input-group image-preview [TO HERE]-->
+                                </div>
+                            </div>
+                            <span style="padding-left:10px" id="ImageError" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script>
+    function OnSuccessPostInsertion() {
+        window.location.href = "@Url.Action("ManagePosts", "Posts")";
+    }
+
+    function UploadImage() {
+        var AllowedFileTypes = ["image/jpeg", "image/png", "image/jpg"];
+        var formdata = new FormData();
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        formdata.append(file.name, file);
+        if (AllowedFileTypes.indexOf(file.type) == -1) {
+            $("#ImageError").text("Only .Jpeg & .Png files are allowed.");
+            $("#clearImage").trigger("click");
+            return false;
+        }
+        else {
+            $("#ImageError").text("");
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'Posts/UploadImage');
+            xhr.send(formdata);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("errImageUrl").innerHTML = '';
+                }
+            }
+            return false;
+        }
+    }
+
+    function ClearImage() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'Posts/DeleteImage');
+        xhr.send("Clear");
+        $("#txtImageUrl").val('');
+    }
+</script>

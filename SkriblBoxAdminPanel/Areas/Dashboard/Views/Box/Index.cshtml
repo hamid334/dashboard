@@ -1,0 +1,251 @@
+﻿@model BasketWebPanel.ViewModels.AddBoxViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            @Html.AntiForgeryToken()
+            <div class="alert alert-success" id="success-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Success! </strong>
+            </div>
+            <div class="alert alert-error" id="error-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Error! </strong> <span> </span>
+            </div>
+            @using (Ajax.BeginForm("Index", "Box", new AjaxOptions { OnSuccess = "OnBoxSuccessInsertion", OnFailure = "OnFailedInsertion", LoadingElementId = "divLoader" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="x_panel">
+                    <div class="x_title">
+                        @if (Model.Id == 0)
+                        {
+                            <h2>Add New Marchent</h2>
+                        }
+                        else
+                        {
+                            <h2>Edit Marchent</h2>
+                        }
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <input type="hidden" id="BoxId" name="Id" value="@Model.Id" />
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <label>Title</label>
+                                @Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <div class="form-group form-inline  ">
+                                    <label class="control-label" title="">Select Category</label>
+                                    <span class="ico-help" title="Search by a payment status"><i class="fa fa-question-circle"></i></span>
+                                    @Html.DropDownList("Category_Id", new SelectList(Model.Categories.Items,
+"value", "Text", Model.Categories.SelectedValue), new { @class = "form-control", @Id = "aioCategories" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group form-inline  ">
+                                    <label class="control-label" title="">Description</label>
+                                    @Html.TextBoxFor(x => x.Description, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (Model.Id == 0)
+                        {
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-inline  ">
+                                        <label class="control-label" title="">First Name</label>
+                                        @Html.TextBoxFor(x => x.Merchant.FirstName, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Merchant.FirstName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-inline  ">
+                                        <label class="control-label" title="">Last Name</label>
+                                        @Html.TextBoxFor(x => x.Merchant.LastName, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Merchant.LastName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-inline  ">
+                                        <label class="control-label" title="">Email</label>
+                                        @Html.TextBoxFor(x => x.Merchant.Email, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Merchant.Email, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-inline  ">
+                                        <label class="control-label" title="">Phone</label>
+                                        @Html.TextBoxFor(x => x.Merchant.Phone, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Merchant.Phone, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-inline  ">
+                                        <label class="control-label" title="">Country</label>
+                                        @Html.TextBoxFor(x => x.Merchant.Country, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Merchant.Country, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-inline  ">
+                                        <label class="control-label" title="">City</label>
+                                        @Html.TextBoxFor(x => x.Merchant.City, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Merchant.City, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-inline  ">
+                                        <label class="control-label" title="">Area</label>
+                                        @Html.TextBoxFor(x => x.Merchant.Area, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Merchant.Area, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-inline  ">
+                                        <label class="control-label" title="">Logo</label>
+                                        <div class="input-group image-preview">
+                                            <input type="text" class="form-control image-preview-filename" disabled="disabled"> <!-- don't give a name === doesn't send on POST/GET -->
+                                            <span class="input-group-btn">
+                                                <!-- image-preview-clear button -->
+                                                <button type="button" id="clearImage" class="btn btn-default image-preview-clear" onclick="ClearImage()" style="display:none;">
+                                                    <span class="glyphicon glyphicon-remove"></span> Clear
+                                                </button>
+                                                <!-- image-preview-input -->
+                                                <div class="btn btn-default image-preview-input">
+                                                    <span class="glyphicon glyphicon-folder-open"></span>
+                                                    <span class="image-preview-input-title">Browse</span>
+                                                    <input type="file" accept="image/png, image/jpeg, image/gif" onchange="UploadImage()" id="fileInput" name="Image" /> <!-- rename it -->
+                                                </div>
+                                            </span>
+                                        </div><!-- /input-group image-preview [TO HERE]-->
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12 col-sm-12 col-xs-12 text-right">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script>
+    function OnBoxSuccessInsertion() {
+        window.location.href = "@Url.Action("ManageBoxes", "Box")";
+    }
+
+    function GetDynamicTextBox(value) {
+        var itemCount = parseInt($("#hdnVidCount").val(), 10);
+        var div = $("<div id=\"divTxtBox_" + itemCount + "\"/>");
+
+
+        var textBox = $("<input />").attr("placeholder", "Video Url").attr("type", "text").attr("class", "form-control input-validation-error").attr("name", "DynamicTextBox");
+        textBox.val(value);
+        div.append("<input placeholder=\"Video Url\" class=\"form-control input-validation-error col-md-11 col-lg-11 col-sm-11\" data-val=\"true\" data-val-url=\"This is not a valid URL.\" id=\"BoxVideos_" + itemCount + "__VideoUrl\" name=\"BoxVideos[" + itemCount + "].VideoUrl\" style=\"width:96%\" type=\"text\" >");
+        //var button = $("<input />").attr("type", "button").attr("value", "Remove");
+        //button.attr("onclick", "RemoveTextBox(this)");
+        div.append("<button style=\"height:34px; width:30px\" onclick=\"RemoveTextBox(this)\" class=\"btn btn-danger btn-xs deleteButtons\" data-title=\"Remove\"><span class=\"glyphicon glyphicon-trash\"></span></button>");
+        div.append("<span class=\"field-validation-valid text-danger\" data-valmsg-for=\"BoxVideos[" + itemCount + "].VideoUrl\" data-valmsg-replace=\"true\"></span>")
+        div.append("<br>")
+
+        $("#hdnVidCount").val((itemCount + 1));
+        return div;
+    }
+
+    function AddTextBox() {
+        var div = GetDynamicTextBox("");
+        $("#TextBoxContainer").append(div);
+    }
+
+    function RemoveTextBox(button) {
+        var itemCount = parseInt($("#hdnVidCount").val(), 10);
+        $(button).parent().remove();
+        $("#hdnVidCount").val((itemCount - 1));
+
+    }
+
+    $('.open-dtpReleaseDate').click(function (event) {
+        event.preventDefault();
+        $('#dtpReleaseDate').click();
+    });
+
+    $(function () {
+        $('#dtpReleaseDate').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            locale: {
+                format: 'DD/MM/YYYY'
+            },
+        },
+            function (start, end, label) {
+                var years = moment().diff(start, 'years');
+                //alert("You are " + years + " years old.");
+            });
+    });
+
+    $("#Price").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+            // Allow: Ctrl+A, Command+A
+            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+            // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+            // let it happen, don't do anything
+            return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+
+    $("#Price").bind("cut copy paste", function (e) {
+        e.preventDefault();
+    });
+
+    function UploadImage() {
+        var formdata = new FormData(); //FormData object
+        var fileInput = document.getElementById('fileInput');
+        //Iterating through each files selected in fileInput
+        for (i = 0; i < fileInput.files.length; i++) {
+            //Appending each file to FormData object
+            formdata.append(fileInput.files[i].name, fileInput.files[i]);
+        }
+        //Creating an XMLHttpRequest and sending
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'box/UploadImage');
+        xhr.send(formdata);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                //alert(xhr.responseText);
+            }
+        }
+        return false;
+    }
+
+    function ClearImage() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'box/DeleteImage');
+        xhr.send("Clear");
+    }
+</script>

@@ -1,0 +1,126 @@
+﻿@model BasketWebPanel.BindingModels.RequestCardModel
+@{
+    ViewBag.Title = "Print User Card";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <style>
+        .container {
+            position: relative;
+            text-align: center;
+            color: white;
+        }
+
+        .Number {
+            position: absolute;
+            bottom: 47px;
+            left: 40px;
+            font-size: 20pt;
+            word-spacing: 0px;
+            font-family: OCR A Std;
+        }
+
+        .Sergey-Tretyak {
+            position: absolute;
+            bottom: 18px;
+            left: 40px;
+            font-size: 22px;
+            font-family: OCR A Std;
+            word-spacing: 0px;
+        }
+
+        .THRU {
+            position: absolute;
+            bottom: 24px;
+            left: 270px;
+            font-size: 8px;
+            font-family: OCR A Std;
+        }
+
+        .VALID {
+            position: absolute;
+            bottom: 32px;
+            left: 270px;
+            font-size: 8px;
+            font-family: OCR A Std;
+        }
+
+        .Date {
+            position: absolute;
+            bottom: 20px;
+            left: 303px;
+            font-size: 20px;
+            font-family: OCR A Std;
+        }
+
+        .Valid-thru {
+            position: absolute;
+            bottom: 30px;
+            left: 200px;
+            font-size: 15px;
+        }
+
+        .wrapper {
+            width: 420px;
+            margin: 15% auto;
+            height: 265px;
+            position: relative;
+        }
+
+        .btn {
+            position: absolute;
+            font-size: 30px;
+            top: -37px;
+            right: -8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        @@media print {
+            * {
+                color: #fff;
+            }
+
+            .btn {
+                display: none;
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+
+
+
+    <div class="wrapper">
+        <button class="btn" onclick="window.print()"><i class="fas fa-print"></i></button>
+       
+        @if (Model.User.Nationality == "Turkish")
+        {
+                    <img src="@Url.Content("~/content/images/YesT.png")" alt="Snow" style="width:420px" />
+
+        }
+        else
+        {
+                    <img src="@Url.Content("~/content/images/NonT.png")" alt="Snow" style="width:420px" />
+
+        }
+                <div class="container">
+                    <div class="Number">@Model.CardNumber</div>
+                    <div class="Sergey-Tretyak">@Model.User.FullName</div>
+                    @*<div class="Sergey-Tretyak">@Model.User.FullName</div>*@
+                    <div class="Date">@Convert.ToDateTime(Model.ExpiryDate).Month.ToString()/@Convert.ToDateTime(Model.ExpiryDate).Year.ToString()</div>
+                    <div class="THRU">THRU</div>
+                    <div class="VALID">VALID</div>
+                </div>
+
+       
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+﻿@model BasketWebPanel.ViewModels.AddHowItWorksViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    #kvFileinputModal{
+        display:inline-table;
+            }
+    .file-drop-disabled {
+        align-content: center;
+        width: fit-content;
+    }
+</style>
+
+
+<input type="hidden" id="hdnHowItWorksUrl" value="@Model.Url" />
+
+@using (Ajax.BeginForm("Index", "Videos", new AjaxOptions { OnSuccess = "OnSuccessHowITWorks", OnFailure = "OnFailedInsertion", LoadingElementId = "divLoader" }))
+{
+    @Html.AntiForgeryToken()
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="x_panel ">
+            <div class="alert alert-success" id="success-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Success! </strong><span> </span>
+            </div>
+            <div class="alert alert-error" id="error-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Error! </strong> <span> </span>
+            </div>
+            <div class="x_title">
+                <h3 class="pull-left">How It Works</h3>
+                             <div class="clearfix"></div>
+            </div>
+            <p>
+
+            </p>
+            <div class="x_content">
+              @*////TestingPurposeVideoUpload*@
+            @*<div class="file-loading">
+                <input id="input-howitworks" name="kartik-input-700[]"  type="file" multiple>
+            </div>*@
+                <div class="form-group">
+                    <label>Video Url</label>
+                    <input type="text" data-val-url="This is not a valid URL." autofocus data-val="true" class="form-control input-validation-error" name="Url" id="Url" data-val-required="This field is required" placeholder="Intro Video Url" value="@Model.Url">
+                    @Html.ValidationMessageFor(m => m.Url, "", new { @class = "text-danger" })
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-xs-12">
+                        <label>Description</label>
+                        @Html.TextAreaFor(x => x.HowItWorksDescription, new { @class = "form-control", placeholder = "Description", id = "Description" })
+                        @Html.ValidationMessageFor(m => m.HowItWorksDescription, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12 col-sm-12 col-xs-12 text-right">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+}
+@Scripts.Render("~/bundles/jquery")
+
+
+<script>
+    //$(window).on('load', function () {
+    //    $("#kvFileinputModal").remove();
+    //});
+
+    function OnSuccessHowITWorks() {
+        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+            $("#success-alert").slideUp(500);
+        });
+    }
+</script>

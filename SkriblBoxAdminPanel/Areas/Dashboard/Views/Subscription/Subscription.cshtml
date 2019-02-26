@@ -1,0 +1,161 @@
+﻿@model BasketWebPanel.ViewModels.SubscriptionListViewModel
+@{
+    ViewBag.Title = "Subscription";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<div class="right_col" role="main" style="min-height: 715px;">
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_content">
+
+
+                @foreach (var detail in Model.Subscriptions)
+                {
+
+
+                    <div role="main">
+                        <div class="row">
+                            @using (Ajax.BeginForm("SaveUserProfile", "Users", new AjaxOptions { OnSuccess = "OnSuccessUserProfileInsertion", OnFailure = "OnFailedInsertion", LoadingElementId = "divLoader" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="x_panel">
+                                    <div class="x_title">
+                                        <h3>User Profile</h3>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="x_content">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                                <label>Profile Picture</label>
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                                        @if (string.IsNullOrEmpty(detail.ProfilePictureUrl))
+                                                        {
+                                                            <img src="@ApiCall.BaseUrl/DefaultImages/User.png" alt="" width="48" height="48">
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <img src="@ApiCall.BaseUrl@detail.ProfilePictureUrl" alt="" width="48" height="48">
+
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                                <label>Full Name</label>
+                                                <input type="text" readonly autofocus data-val="true" class="form-control input-validation-error" name="FullName" id="txtFullName" data-val-required="This field is required" placeholder="Full Name" value="@detail.FullName">
+                                                @*@Html.ValidationMessageFor(detail=>detail., "", new { @class = "text-danger" })*@
+                                            </div>
+                                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                                <label>Phone Number</label>
+                                                <input readonly type="tel" data-val="true" data-val-required="Phone Number is required" class="form-control input-validation-error numbersOnly" maxlength="15" name="Phone" id="PhoneNumber" data-val-length="Phone Number length should be at least 10 digits" data-val-length-max="15" data-val-length-min="10" data-val-required="Phone Number is required" placeholder="Phone Number" value="@detail.Phone">
+                                                @*@Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })*@
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                                <label>Email</label>
+                                                <input readonly type="text" autofocus data-val="true" class="form-control input-validation-error" name="Email" id="txtEmail" data-val-required="This field is required" placeholder="Email" value="@detail.Email">
+                                                @*@Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })*@
+                                            </div>
+                                        </div>
+
+                                     
+
+
+                                        <div id="accordion" role="tablist" class="row" aria-multiselectable="true" style="margin-top: 40px;">
+                                            <div class="col-md-12">
+                                                <div class="card-header col-md-12 col-sm-12 col-xs-12 form-group has-feedback" role="tab" id="headingOne" style="padding-left:0px;" >
+                                                    <h3 class="x_title">
+                                                        Box Details
+                                                    </h3>
+                                                </div>
+
+
+                                             <table class="table table-striped table-bordered" >
+                                                 <tr style="background-color:#eee;" >
+                                                     <th>Box Name</th>
+                                                     <th>Box Type</th>
+                                                     <th>Subscription Date</th>
+                                                     <th>Expiry Date</th>
+                                                     <th>Activation Code</th>
+                                                     <th>Details</th>
+
+                                                 </tr>
+                                                 <tr>
+                                                     <td>@detail.Name</td>
+                                                     <td>@detail.BoxCategoryName</td>
+                                                     <td>@detail.SubscriptionDate</td>
+                                                     <td>@detail.ExpiryDate</td>
+                                                     <td>@detail.ActivationCode</td>
+
+                                                     <td>
+                                                         <button onclick="box_details(this.id)"  id="@detail.Box_Id" type="button" class="btn btn-link" aria-label="Left Align">
+                                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                                         </button>
+                                                     </td>
+
+                                                 </tr>
+
+                                             </table>
+
+
+
+
+                                                @*<div id="divUserAddresses" class="collapse col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                    <div class="card-body col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                        <div class="clearfix"></div>
+
+                        <p>@detail.BoxCategoryName</p>
+                    </div>
+
+
+                </div>*@
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                        </div>
+
+                        @*<div>
+                                @Html.ActionLink("Back to List", "ManageUsers")
+                            </div>*@
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@Scripts.Render("~/bundles/jquery")
+<script>
+    $(document).ready(function () {
+        $("#SubscriptionTitle").text("Subscription Details");
+        $(".x_panel > .x_title").html("<h3>Subscription Details</h3>");
+    });
+
+    function box_details(box_id) {
+        var url='@Url.Action("Index","Box",new {Area="Dashboard", BoxId="__ID__" })';
+        url=url.replace("__ID__",box_id);
+        window.location=url;
+    
+    }
+</script>
+
+

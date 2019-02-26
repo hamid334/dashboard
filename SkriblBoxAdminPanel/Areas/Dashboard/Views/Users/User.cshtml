@@ -1,0 +1,409 @@
+﻿@model BasketWebPanel.ViewModels.UserBindingModel
+
+@{
+    ViewBag.Title = "User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+        color: #555;
+        border: 1px solid #ddd;
+        border-bottom-color: transparent
+    }
+    .hide {
+        display: none;
+    }
+
+    .table caption + thead tr:first-child th,
+    .table colgroup + thead tr:first-child th,
+    .table thead:first-child tr:first-child th,
+    .table caption + thead tr:first-child td,
+    .table colgroup + thead tr:first-child td,
+    .table thead:first-child tr:first-child td {
+        border-top: 0;
+        text-align: center;
+    }
+</style>
+<script language="JavaScript" type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Content/intl-tel-input-master/build/js/intlTelInput.js"></script>
+<script src="~/Content/intl-tel-input-master/build/js/utils.js"></script>
+<div class="right_col" role="main">
+    <div class="row">
+        @using (Ajax.BeginForm("SaveUserProfile", "Users", new AjaxOptions { OnSuccess = "OnSuccessUserProfileInsertion", OnFailure = "OnFailedInsertion", LoadingElementId = "divLoader" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="x_panel">
+                <div class="x_title clearfix">
+                <h3 class="pull-left">User Details <small>  <i class="fa fa-arrow-circle-left"></i>@Html.ActionLink(" back to users list", "ManageUsers")</small></h3>
+                </div>
+                    <div class="clearfix"></div>
+                <div class="x_content">
+                    <div>
+                    <div class="row">
+                        <div >
+                            @*<label>Profile Picture</label>*@
+                            <div class="row">
+                                <div style="text-align:center; margin: auto">
+                                    <img src="@ApiCall.BaseUrl@Model.ProfilePictureUrl" alt="" width="100" height="100" class="img-circle" >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        <div style="text-align:center">
+                        <h3 style="       color: white; text-shadow: 1px 1px 2px black, 0 0 25px #2a3f54, 0 0 5px #2a3f54;"> @Model.UserName</h3>
+                        <p><i class="glyphicon glyphicon-envelope"></i> @Model.Email | <i class="glyphicon glyphicon-phone" ></i> @Model.Phone</p>
+                            </div>
+                    @*<div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                            <label>Full Name</label>
+                            <input type="text" readonly autofocus data-val="true" class="form-control input-validation-error" name="FullName" id="txtFullName" data-val-required="This field is required" placeholder="Full Name" value="@Model.FullName">
+                            @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                            <label>Phone Number</label>
+                            <input readonly type="tel" data-val="true" data-val-required="Phone Number is required" class="form-control input-validation-error numbersOnly" maxlength="15" name="Phone" id="PhoneNumber" data-val-length="Phone Number length should be at least 10 digits" data-val-length-max="15" data-val-length-min="10" data-val-required="Phone Number is required" placeholder="Phone Number" value="@Model.Phone">
+                            @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                            <label>Email</label>
+                            <input readonly type="text" autofocus data-val="true" class="form-control input-validation-error" name="Email" id="txtEmail" data-val-required="This field is required" placeholder="Email" value="@Model.Email">
+                            @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div id="accordion" role="tablist" class="row" aria-multiselectable="true" hidden>
+                        <div class="card">
+                            <div class="card-header col-md-12 col-sm-12 col-xs-12 form-group has-feedback" role="tab" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#divUserAddresses" aria-expanded="false" aria-controls="collapseOne">
+                                        User Addresses (@Model.UserAddresses.Count)
+                                    </a>
+                                </h5>
+                            </div>
+                            @if (Model.UserAddresses.Count > 0)
+                            {
+                                <div id="divUserAddresses" class="collapse col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                                    @for (int i = 0; i < Model.UserAddresses.Count; i++)
+                                    {
+                                        <div class="card-body col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                            <div class="clearfix"></div>
+                                            <textarea disabled style="width:100%" cols="20" rows="2" class="valid">@Model.UserAddresses[i].BuildingName, @Model.UserAddresses[i].StreetName, @Model.UserAddresses[i].NearestLandmark, @Model.UserAddresses[i].City, @Model.UserAddresses[i].Country</textarea>
+                                        </div>
+
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>*@
+                    <div id="accordion" role="tablist" class="row" aria-multiselectable="true" hidden>
+                        <div class="card">
+                            <div class="card-header col-md-12 col-sm-12 col-xs-12 form-group has-feedback" role="tab" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#divPaymentCards" aria-expanded="false" aria-controls="collapseOne">
+                                        Payment Cards (@Model.PaymentCards.Count)
+                                    </a>
+                                </h5>
+                            </div>
+                            <input id="hdnPaymentCardCount" type="hidden" value="@Model.PaymentCards.Count" />
+                            @if (Model.PaymentCards.Count > 0)
+                            {
+                                <div id="divPaymentCards" class="collapse col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                                    @for (int i = 0; i < Model.PaymentCards.Count; i++)
+                                    {
+                                        <div class="card-body col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                            <div class="clearfix"></div>
+                                            <input style="width:100%" id="txtPaymentCards_@i" readonly type="text" autofocus data-val="true" class="form-control input-validation-error" name="Email" data-val-required="This field is required" placeholder="Payment Card" value="@Model.PaymentCards[i].CardNumber">
+                                        </div>
+                                    }
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                        </div>
+
+                        <div id="exTab2" class="container">
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a href="#1" data-toggle="tab">Orders</a>
+                                </li>
+                                <li>
+                                    <a href="#2" data-toggle="tab">Subscriptions</a>
+                                </li>
+                                <li>
+                                    <a href="#3" data-toggle="tab">Favorites</a>
+                                </li>
+                                <li>
+                                    <a href="#4" data-toggle="tab">Feedback</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content panel-body" style="border:1px solid #dddddd">
+                                <div class="tab-pane active  panel-default" id="1">
+                                  
+                                        <div class="table-responsive"  style="overflow-x:auto; overflow-y:hidden">
+                                            <table id="datatable_order" class="table table-striped table-bordered" style="table-layout: auto; text-align:center;">
+                                                <thead>
+                                                    <tr>
+
+                                                        <th  style="vertical-align:middle">Order #</th>
+                                                        @*<th  style="vertical-align:middle">Store Name</th>*@
+                                                        <th  style="vertical-align:middle">Payment Status</th>
+                                                        <th style="vertical-align:middle">Payment Method</th>
+                                                        <th  style="vertical-align:middle">Created On</th>
+                                                        <th  style="vertical-align:middle">Order Total</th>
+                                                        <th  style="vertical-align:middle">Details</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                  @foreach (var order in Model.Orders.Where(x=>x.IsDeleted==false))
+	                                                {
+	
+
+                                                        <tr>
+
+                                                            <td style="vertical-align:middle">@order.Id</td>
+
+                                                            @*<td style="vertical-align:middle">Skrible</td>*@
+                                                            <td style="vertical-align:middle">@order.PaymentStatusName</td>
+                                                            <td style="vertical-align:middle">@order.PaymentMethodName</td>
+                                                            <td style="vertical-align:middle">@String.Format("{0:dddd, MMMM d, yyyy}",order.OrderDateTime)</td>
+                                                            <td style="vertical-align:middle">@order.Total</td>
+                                                            <td style="vertical-align:middle">
+                                                                <p data-toggle="tooltip" title="" style="margin: 0 0 0px;" data-original-title="View Details">
+                                                                <p>
+                                                                    <a href="@Url.Action("Index","Orders",new {Area="Dashboard",OrderId=order.Id })">
+                                                                        <button type="button" class="btn btn-link" aria-label="Left Align">
+                                                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                                                        </button>
+                                                                    </a>
+                                                                </p>
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                    }
+
+
+
+
+                                                </tbody>
+                                            </table>
+                   
+
+                                        </div>
+                                
+                                </div>
+                                <div class="tab-pane   panel-default" id="2">
+                                    <div class="table-responsive">
+                                        <table id="datatable_subscription" class="table table-striped table-bordered" style="table-layout: auto; text-align:center;">
+                                            <thead>
+                                                <tr>
+
+                                                    <th  style="vertical-align:middle">Box Id</th>
+                                                    <th style="vertical-align:middle">Box Name</th>
+                                                    <th style="vertical-align:middle">Category</th>
+                                                    <th style="vertical-align:middle">Box Price</th>
+                                                    <th  style="vertical-align:middle">Subscription Date</th>
+                                                    <th  style="vertical-align:middle">Expiry Date</th>
+                                                    <th style="vertical-align:middle">Details</th>
+
+                                         
+                                                 
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @foreach (var subscription in Model.UserSubscriptions.Where(x => x.IsDeleted == false))
+                                                {
+	                                            <tr>
+
+                                                    <td  style="vertical-align:middle">@subscription.Box.Id</td>
+                                                    <td style="vertical-align:middle">@subscription.Box.Name</td>
+                                                    <td style="vertical-align:middle">@subscription.Box.CategoryName</td>
+                                                    <td style="vertical-align:middle">@subscription.Box.Price</td>
+                                                    <td  style="vertical-align:middle">@String.Format("{0:dddd, MMMM d, yyyy}", subscription.SubscriptionDate)</td>
+                                                    <td  style="vertical-align:middle">@String.Format("{0:dddd, MMMM d, yyyy}", subscription.ExpiryDate)</td>
+                                                    <td style="vertical-align:middle">
+                                                        <p data-toggle="tooltip" title="" style="margin: 0 0 0px;" data-original-title="View Details">
+                                                        <p>
+                                                            <a href="@Url.Action("SearchSubscriptionResult","Subscription",new {Area="Dashboard", SubscriptionId = subscription.Id })">
+                                                                <button type="button" class="btn btn-link" aria-label="Left Align">
+                                                                    <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                                                </button>
+                                                            </a>
+                                                        </p>
+                                                        </p>
+                                                    </td>
+                                                 </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                  
+
+                                    </div>
+                                </div>
+                                <div class="tab-pane   panel-default" id="3">
+                                    <div class="table-responsive">
+                                        <table id="datatable_favorite" class="table table-striped table-bordered" @*style="table-layout: fixed; width:auto "*@>
+                                            <thead>
+                                                <tr>
+                                                    
+                                                    <th style="vertical-align:middle">ID</th>
+                                                    <th style="vertical-align:middle">Product Name</th>
+                                                    <th style="vertical-align:middle">Product Price</th>
+                                                    <th style="vertical-align:middle">Product Image</th>
+                                                    @*<th style="vertical-align:middle">Product Description</th>*@
+                                                
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var favorite in Model.Favourites.Where(x => x.IsDeleted == false))
+                                                {
+
+                                                    <tr>
+
+                                                        <td style="vertical-align:middle;text-align:center;">@favorite.Id</td>
+                                                        <td style="vertical-align:middle;text-align:center;">@favorite.Product.Name</td>
+                                                        <td style="vertical-align:middle;text-align:center;">@favorite.Product.Price</td>
+                                                        <td style="vertical-align:middle;text-align:center;"><img style="height: 56px;" src="@ApiCall.BaseUrl@favorite.Product.ImageUrl"/></td>
+                                                        @*<td style="vertical-align:middle">@favorite.Product.Description</td>*@
+                                                </tr>
+
+                                                }
+                                            </tbody>
+                                        </table>
+                                      
+                                    </div>
+                                </div>
+                                <div class="tab-pane   panel-default" id="4">
+                                    <div class="table-responsive">
+                                        <table id="datatable_feedback" class="table table-striped table-bordered" @*style="table-layout: fixed; width:auto "*@>
+                                            <thead>
+                                                <tr>
+
+                                                    <th style="vertical-align:middle">ID</th>
+                                                    <th style="vertical-align:middle">Store Name</th>
+                                                    <th style="vertical-align:middle">Feedback</th>
+                                                    <th style="vertical-align:middle">Created On</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var feedback in Model.Feedback)
+                                                {
+                                                <tr>
+
+                                                    <td  style="vertical-align:middle;text-align: center;">@feedback.Id</td>
+                                                    <td  style="vertical-align:middle;text-align: center;">@feedback.Store.Name</td>
+                                                    <td  style="vertical-align:middle;text-align: center;">@feedback.Description</td>
+                                                    <td  style="vertical-align:middle;text-align: center;">@feedback.Month/@feedback.Year</td>
+                                                </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                        <script>
+                                           
+
+
+                                       
+                                        </script>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+
+
+
+                </div>
+            </div>
+
+        }
+    </div>
+
+  
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $(function () {
+            $("#PhoneNumber").intlTelInput({
+                allowExtensions: true,
+                autoFormat: true,
+                autoHideDialCode: false,
+                autoPlaceholder: false,
+                defaultCountry: "auto",
+                ipinfoToken: "yolo",
+                nationalMode: false,
+                numberType: "MOBILE",
+                preventInvalidNumbers: true
+                //utilsScript: "../Content/intl-tel-input-master/build/js/utils.js"
+            });
+        });
+
+        var paymentCardsCount = $("#hdnPaymentCardCount").val();
+        if (paymentCardsCount > 0) {
+            for (var i = 0; i < paymentCardsCount; i++) {
+                $("#txtPaymentCards_" + i).val($("#txtPaymentCards_" + i).val().replace(/\d(?=\d{4})/g, "*"));
+            }
+        }
+        //mask credit card number and see only last 4 digits
+
+        //str = str.replace(/\d(?=\d{4})/g, "*");
+
+      
+    });
+
+
+    $(document).ready(function () {
+        var table = $('#datatable_order').DataTable({
+            "pagingType": "full_numbers",
+            columnDefs: [{
+                orderable: false,
+                className: 'select-checkbox',
+                targets: [1, 5]
+            }]
+        });
+
+
+        var table = $('#datatable_subscription').DataTable({
+            "pagingType": "full_numbers",
+            columnDefs: [{
+                orderable: false,
+                className: 'select-checkbox',
+                targets: [1, 2, 6]
+            }]
+        });
+
+
+
+        var table = $('#datatable_favorite').DataTable({
+            "pagingType": "full_numbers",
+            columnDefs: [{
+                orderable: false,
+                className: 'select-checkbox',
+                targets: [1, 3]
+            }]
+        });
+
+
+        var table = $('#datatable_feedback').DataTable({
+            "pagingType": "full_numbers",
+            columnDefs: [{
+                orderable: false,
+                className: 'select-checkbox',
+                targets: [1, 2]
+            }]
+        });
+
+
+    });
+
+</script>
