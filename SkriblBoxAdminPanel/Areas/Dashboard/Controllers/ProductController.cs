@@ -82,8 +82,12 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
                 else
                 {
                     model.Product = responseProduct.GetValue("Result").ToObject<ProductBindingModel>();
-                    model.CategoryOptions = Utility.GetCategoryOptions(User, "", model.Product.Category_Id);
+                    model.Product.BoxId = model.Product.Store.Box_Id;
+                    model.CategoryOptions = Utility.GetCategoryOptions(User, "None", model.Product.Category_Id);
                     model.StoreOptions = Utility.GetStoresOptions(User, "", model.Product.Store_Id);
+                    model.BoxOptions = Utility.GetBrandOptions(User, "None", model.Product.BoxId);
+                    model.StoreId = model.Product.Store_Id;
+                    //model.Product.Store.Id = model.Product.Stosre_Id;
                 }
             }
             else
@@ -91,6 +95,9 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
                 //Providing CategoryList
                 model.CategoryOptions = Utility.GetCategoryOptions(User, "None");
                 model.StoreOptions = Utility.GetStoresOptions(User, "None");
+                model.Product.Store =null;
+                model.BoxOptions = Utility.GetBrandOptions(User, "None");
+              
             }
 
 
@@ -145,23 +152,59 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
                     fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = ImageFile.FileName };
                     content.Add(fileContent);
                 }
-                if (model.Product.Id > 0)
+                var response = new JObject();
+
+                if (model.StoreId == -1)
                 {
-                    content.Add(new StringContent(model.Product.Id.ToString()), "Id");
+
+                    var Tresponse = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/Admin/GetStoreByMerchantIdForAdmin", User, GetRequest: true, parameters: "Box_Id=" + model.Product.BoxId));
+                    var responseCategories = Tresponse.GetValue("Result").ToObject<List<StoreViewModel>>();
+                    foreach (var item in responseCategories)
+                    {
+                        //if (model.StoreId==-1)
+                        //{
+                        model.StoreId = item.Id;
+                        //   }
+                        if (model.Product.Id > 0)
+                        {
+                            content.Add(new StringContent(model.Product.Id.ToString()), "Id");
+                        }
+
+                        content.Add(new StringContent(model.Product.Name), "Name");
+                        content.Add(new StringContent(model.Product.Price.ToString()), "Price");
+                        content.Add(new StringContent(model.Product.Category_Id.ToString()), "Category_Id");
+                        content.Add(new StringContent(model.StoreId.ToString()), "Store_Id");
+                        content.Add(new StringContent(model.Product.BoxId.ToString()), "Box_Id");
+                        content.Add(new StringContent(model.Product.Description), "Description");
+                        content.Add(new StringContent(Convert.ToString(model.Product.DiscountPrice)), "DiscountPrice");
+                        content.Add(new StringContent(Convert.ToString(model.Product.DiscountPercentage)), "DiscountPercentage");
+
+
+                        content.Add(new StringContent(Convert.ToString(ImageDeletedOnEdit)), "ImageDeletedOnEdit");
+                        response = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/Admin/AddProduct", User, isMultipart: true, multipartContent: content));
+                        content = new MultipartFormDataContent();
+                    }
                 }
+                else
+                {
+                    if (model.Product.Id > 0)
+                    {
+                        content.Add(new StringContent(model.Product.Id.ToString()), "Id");
+                    }
 
-                content.Add(new StringContent(model.Product.Name), "Name");
-                content.Add(new StringContent(model.Product.Price.ToString()), "Price");
-                content.Add(new StringContent(model.Product.Category_Id.ToString()), "Category_Id");
-                content.Add(new StringContent(model.StoreId.ToString()), "Store_Id");
-                content.Add(new StringContent(model.Product.Description), "Description");
-                content.Add(new StringContent(Convert.ToString(model.Product.DiscountPrice)), "DiscountPrice");
-                content.Add(new StringContent(Convert.ToString(model.Product.DiscountPercentage)), "DiscountPercentage");
+                    content.Add(new StringContent(model.Product.Name), "Name");
+                    content.Add(new StringContent(model.Product.Price.ToString()), "Price");
+                    content.Add(new StringContent(model.Product.Category_Id.ToString()), "Category_Id");
+                    content.Add(new StringContent(model.StoreId.ToString()), "Store_Id");
+                    content.Add(new StringContent(model.Product.BoxId.ToString()), "Box_Id");
+                    content.Add(new StringContent(model.Product.Description), "Description");
+                    content.Add(new StringContent(Convert.ToString(model.Product.DiscountPrice)), "DiscountPrice");
+                    content.Add(new StringContent(Convert.ToString(model.Product.DiscountPercentage)), "DiscountPercentage");
 
 
-                content.Add(new StringContent(Convert.ToString(ImageDeletedOnEdit)), "ImageDeletedOnEdit");
-                var response = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/Admin/AddProduct", User, isMultipart: true, multipartContent: content));
-
+                    content.Add(new StringContent(Convert.ToString(ImageDeletedOnEdit)), "ImageDeletedOnEdit");
+                    response = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/Admin/AddProduct", User, isMultipart: true, multipartContent: content));
+                }
                 if (response.ToString().Contains("UnAuthorized"))
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.Unauthorized, "UnAuthorized Error");
@@ -281,7 +324,36 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
 
             return Json(responseCategories, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult FetchStoresByBoxId(int BoxId) // its a GET, not a POST
+        {
+            var response = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/Admin/GetStoreByMerchantIdForAdmin", User, GetRequest: true, parameters: "Box_Id=" + BoxId));
+            var responseCategories = response.GetValue("Result").ToObject<List<StoreViewModel>>();
+            var tempCats = responseCategories.ToList();
 
+            //foreach (var cat in responseCategories)
+            //{
+            //    cat.Name = cat.GetFormattedBreadCrumb(tempCats);
+            //}
+            responseCategories.Insert(0, new StoreViewModel { Id = -1, Name = "All" });
 
+            responseCategories.Insert(0, new StoreViewModel { Id = 0, Name = "None" });
+            
+            return Json(responseCategories, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult FetchMerchant(int CategoryId) // its a GET, not a POST
+        {
+            var response = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/Admin/GetMerchantByCategoryIdForAdmin", User, GetRequest: true, parameters: "Category_Id=" + CategoryId));
+            var responseCategories = response.GetValue("Result").ToObject<List<Models.Box>>();
+            var tempCats = responseCategories.ToList();
+
+            //foreach (var cat in responseCategories)
+            //{
+            //    cat.Name = cat.GetFormattedBreadCrumb(tempCats);
+            //}
+
+            responseCategories.Insert(0, new Models.Box { Id = 0, Name = "None" });
+
+            return Json(responseCategories, JsonRequestBehavior.AllowGet);
+        }
     }
 }

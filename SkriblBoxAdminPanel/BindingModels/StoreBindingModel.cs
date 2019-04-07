@@ -26,6 +26,11 @@ namespace BasketWebPanel.BindingModels
         public string Schedule_Friday { get; set; }
 
         public string ImageUrl { get; set; }
+        public int Box_Id { get; set; }
 
+    }
+    public class StoresViewModel
+    {
+        public List<StoreBindingModel> Stores { get; set; }
     }
 }

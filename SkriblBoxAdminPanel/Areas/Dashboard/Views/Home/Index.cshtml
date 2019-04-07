@@ -155,14 +155,14 @@
                                             <td>
                                                 <p style="font-size:13px"><i class="fa fa-square green"></i>Android </p>
                                             </td>
-                                            <td style="font-size:13px">@Model.DeviceUsage[1].Percentage%</td>
+                                            <td style="font-size:13px">@Model.DeviceUsage[0].Percentage%</td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <p style="font-size:13px"><i class="fa fa-square red"></i>Others </p>
                                             </td>
                                             @{
-                                                var other = 100 - Model.DeviceUsage[0].Percentage - Model.DeviceUsage[1].Percentage;
+                                                var other = 100 - Model.DeviceUsage[0].Percentage - Model.DeviceUsage[0].Percentage;
                                             }
                                             <td style="font-size:13px">@other</td>
                                         </tr>

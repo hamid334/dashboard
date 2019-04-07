@@ -51,49 +51,71 @@
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                                 <label>Product Price</label>
-                                @* <input type="text" data-val="true" class="form-control input-validation-error" name="Price" id="Price" data-val-required="Price is required" placeholder="Product Price" value="@Model.Price">*@
-                                @Html.TextBoxFor(x => x.Product.Price, new { @class = "form-control", @id = "Price", @placeholder = "Product Price", @type = "text" })
-                                @Html.ValidationMessageFor(m => m.Product.Price, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                                <label>Discount Price</label>
-                                <input type="text" autofocus data-val="true" class="form-control input-validation-error" name="Product.DiscountPrice" id="DiscountPrice" data-val-required="This field is required" placeholder="Discount Price" value="@Model.Product.DiscountPrice">
-                                @Html.ValidationMessageFor(m => m.Product.DiscountPrice, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                                <label>Discount Percentage</label>
-                                @* <input type="text" data-val="true" class="form-control input-validation-error" name="Price" id="Price" data-val-required="Price is required" placeholder="Product Price" value="@Model.Price">*@
+                           @*    <input type="text" data-val="true" class="form-control input-validation-error" name="Price" id="Price" data-val-required="Price is required" placeholder="Product Price" value="@Model.Product.Price">*@
+    @Html.TextBoxFor(x => x.Product.Price, new { @class = "form-control", @id = "Price", @placeholder = "Product Price", @type = "text"} )
+            @Html.ValidationMessageFor(m => m.Product.Price, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+            <label>Discount Price</label>
+            <input type="text" autofocus data-val="true" class="form-control input-validation-error" name="Product.DiscountPrice" id="DiscountPrice" data-val-required="This field is required" placeholder="Discount Price" value="@Model.Product.DiscountPrice">
+            @Html.ValidationMessageFor(m => m.Product.DiscountPrice, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+            <label>Discount Percentage</label>
+            @* <input type="text" data-val="true" class="form-control input-validation-error" name="Price" id="Price" data-val-required="Price is required" placeholder="Product Price" value="@Model.Price">*@
                                 @Html.TextBoxFor(x => x.Product.DiscountPercentage, new { @class = "form-control", @id = "Price", @placeholder = "Discount Percentage", @type = "text" })
                                 @Html.ValidationMessageFor(m => m.Product.DiscountPercentage, "", new { @class = "text-danger" })
                             </div>
                         </div>
                         <div class="row">
+                            @if (Model.Role == Utility.RoleTypes.SuperAdmin || Model.Role == Utility.RoleTypes.Agent)
+                            {
+                                <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                                           <label>Category</label>
+                                                           @Html.DropDownList("Product.Category_Id", new SelectList(Model.CategoryOptions.Items,
+                                    "value", "Text", Model.Product.Category_Id), new { @class = "form-control",onChange= "AddProduct_OnMerchantChange()" })
+                                                           @Html.ValidationMessageFor(x => x.Product.Category_Id, "", new { @class = "text-danger" })
+                                                       </div>
+                            }
+
+
+                                                        @*<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                        <label>Category</label>
+                                        @Html.DropDownList("Product.Store_Id", new SelectList(Model.CategoryOptions.Items,
+        "value", "Text", Model.CategoryOptions.SelectedValue), new { @class = "form-control", onChange = "AddProduct_OnStoreChange()" })
+                                        @Html.ValidationMessageFor(x => x.Product.Category_Id, "", new { @class = "text-danger" })
+                 , onChange = "AddProduct_OnMerchantChange()"                    </div>*@
+                @if (Model.Role == Utility.RoleTypes.SuperAdmin || Model.Role == Utility.RoleTypes.Agent)
+                 {
+
+                    <div class="row">
+
+
+                        <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                            <label>Merchant</label>
+                            @Html.DropDownList("Product.BoxId", new SelectList(Model.BoxOptions.Items,
+          "value", "Text", Model.Product.BoxId), new { @class = "form-control", onChange = "AddProduct_OnStoreChange()" })
+                            @Html.ValidationMessageFor(x => x.Store.Box_Id, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                 }
+@if (Model.Role == Utility.RoleTypes.SuperAdmin || Model.Role == Utility.RoleTypes.Agent || Model.Role == Utility.RoleTypes.Merchant) 
+{
                             <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                                <label>Category</label>
-                                @Html.DropDownList("Product.Category_Id", new SelectList(Model.CategoryOptions.Items,
-         "value", "Text", Model.CategoryOptions.SelectedValue), new { @class = "form-control",onChange= "AddProduct_OnStoreChange()" })
-                                @Html.ValidationMessageFor(x => x.Product.Category_Id, "", new { @class = "text-danger" })
-                            </div>
-
-
-                            @*<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                                                                <label>Category</label>
-                                                                @Html.DropDownList("Product.Store_Id", new SelectList(Model.CategoryOptions.Items,
-                                "value", "Text", Model.CategoryOptions.SelectedValue), new { @class = "form-control", onChange = "AddProduct_OnStoreChange()" })
-                                                                @Html.ValidationMessageFor(x => x.Product.Category_Id, "", new { @class = "text-danger" })
-                                                            </div>*@
-
-                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                                <label>Store</label>
+                                <label>Branch</label>
                                 @Html.DropDownList("StoreId", new SelectList(Model.StoreOptions.Items,
-"value", "Text", Model.StoreOptions.SelectedValue), new { @class = "form-control" })
+"value", "Text", Model.StoreId), new { @class = "form-control" })
                                 @Html.ValidationMessageFor(x => x.StoreId, "", new { @class = "text-danger" })
                             </div>
-
+                            }
 
                         </div>
+                      
+                           
+                       
                         <div class="row">
                             <div class="col-xs-12 col-md-12 col-xs-12">
                                 <!-- image-preview-filename input [CUT FROM HERE]-->
@@ -280,12 +302,33 @@
         $('#UploadImage').show();
         DeleteImageOnEdit();
     }
-
-    function AddProduct_OnStoreChange() {
+    @*function AddProduct_OnMerchantChange() {
         var url = '@Url.Action("FetchStores", "Product")';
-        var categories = $('#StoreId');
+        var merchants = $('#Product_BoxId');
         var catId = $('#Product_Category_Id').val();
         $.getJSON(url, { CategoryId: $("#Product_Category_Id").val() }, function (response) {
+            merchants.empty();
+            $.each(response, function (index, item) {
+                merchants.append($('<option></option>').text(item.Name).val(item.Id));
+            });
+        })
+    }*@
+    function AddProduct_OnMerchantChange() {
+        var url = '@Url.Action("FetchMerchant", "Product")';
+        var merchants = $('#Product_BoxId');
+        var catId = $('#Product_Category_Id').val();
+        $.getJSON(url, { CategoryId: $("#Product_Category_Id").val() }, function (response) {
+            merchants.empty();
+            $.each(response, function (index, item) {
+                merchants.append($('<option></option>').text(item.Name).val(item.Id));
+            });
+        })
+    }
+    function AddProduct_OnStoreChange() {
+        var url = '@Url.Action("FetchStoresByBoxId", "Product")';
+        var categories = $('#StoreId');
+        var catId = $('#Product_BoxId').val();
+        $.getJSON(url, { BoxId: $("#Product_BoxId").val() }, function (response) {
             categories.empty();
             $.each(response, function (index, item) {
                 categories.append($('<option></option>').text(item.Name).val(item.Id));

@@ -154,8 +154,8 @@
                                     <li>
                                         <a><i class="fa fa-sitemap"></i> City <span class="fa fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
-                                            <li>
-                                                <a href="@Url.Action("Index", "City")">Add New City</a>
+                                            <li>@*@Url.Action("Index", "City")*@
+                                                <a href="#">Add New City</a>
                                             </li>
                                             <li>
                                                 <a href="@Url.Action("ManageCities", "City")">Manage City</a>
@@ -219,6 +219,7 @@
                                 {
                                     <li><a href="@Url.Content("~/Dashboard/Offers/Latest")"><i class="fa fa-shopping-bag"></i> Latest Offers</a></li>
                                     <li><a href="@Url.Content("~/Dashboard/Offers/Favourite")"><i class="fa fa-shopping-bag"></i>Favourite Offers</a></li>
+                                    <li><a class="editButtons12" href=""><i class="fa fa-credit-card"></i> My Card</a></li>
                                     <li><a href="#"><i class="fa fa-credit-card"></i> Renew Card</a></li>
                                 }
                                 @*<li>
@@ -376,7 +377,8 @@
             <footer>
                 <div class="pull-right">
                     @*Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>*@
-                    <span style="font-size:15px">Powered by    </span> <a href="https://www.ingic.ae/" target="_blank"><img height="20px" width="70px" src="~/Content/images/ingic.png"></a>
+                    @*<span style="font-size:15px">Powered by    </span>*@ 
+                    @*<a href="https://www.ingic.ae/" target="_blank"><img height="20px" width="70px" src="~/Content/images/ingic.png"></a>*@
                 </div>
                 <div class="clearfix"></div>
             </footer>
@@ -507,6 +509,13 @@
     $('#Tags').tagsinput({
         //maxTags: 3,
         //maxChars: 8
+    });
+    $(document).on("click", ".editButtons12", function () {
+//        var boxId = $(this).data('boxid');
+        var boxId = $('#adminId').val();
+        var url = '@Url.Action("MyCard", "Users", new { UserID = "__id__" })';
+        //window.location.href = url.replace('__id__', boxId);
+        $('<a href="' + url.replace('__id__', boxId) + '" target="blank"></a>')[0].click();
     });
 </script>
 @*/////StarRatingPlugin*@

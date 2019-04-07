@@ -22,8 +22,8 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
         public ActionResult ManageUsers()
         {
             var response = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/Admin/GetUsers", User, null, true, false, null));
-
-            SearchUserViewModel model = new SearchUserViewModel();
+          
+                        SearchUserViewModel model = new SearchUserViewModel();
 
             if (response is Error)
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Internal Server Error");
@@ -35,6 +35,8 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
                 user.StatusName = user.IsDeleted ? "Blocked" : "Active";
                 if (user.ProfilePictureUrl == null || user.ProfilePictureUrl == "")
                     user.ProfilePictureUrl = "UserImages/Default.png";
+
+                user.IsCard = user.SignInType == 0 ? true : false;
             }
             model.StatusOptions = Utility.GetUserStatusOptions();
 
@@ -72,7 +74,51 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
                 return new HttpStatusCodeResult(Utility.LogError(ex), "Internal Server Error");
             }
         }
+        public ActionResult MyCard(int? UserID)
 
+        {
+            UserBindingModel users = null;
+            var model = new RequestCardModel();
+            var res = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/Admin/GetUser", User, null, true, false, null, "UserId=" + UserID, "SignInType=0"));
+
+
+            if (res is Error)
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Internal Server Error");
+            else
+                users = res.GetValue("Result").ToObject<UserBindingModel>();
+            if (users.Email != User.Identity.Name)
+            {
+                return View(model);
+            }
+            else
+            { }
+            //foreach (var item in users)
+            //{
+            //    if (item.Email == User.Identity.Name) 
+            //    {
+            //        UserID = item.Id;
+            //    }
+            //}
+            if (UserID.HasValue)
+            {
+                var response = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/User/GetBulkCardDetails", User, null, true, false, null, "User_Id=" + UserID.Value));
+
+
+                if (response is Error || response == null)
+                    return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Internal Server Error");
+                else
+                    model.RequestCard = response.GetValue("Result").ToObject<List<RequestCardModel>>();
+                //model.User.FullName = model.User.FirstName + " " + model.User.LastName;
+
+                // model.RequestCard= (RequestCardModel)response.GetValue("Result").ToObject<>();
+
+
+
+                // model.SetSharedData(User);
+
+            }
+            return View(model);
+        }
         public ActionResult GetUser(int UserId)
         {
             try

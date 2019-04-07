@@ -18,8 +18,10 @@ namespace BasketWebPanel.Areas.Dashboard.Models
 
         public StoreViewModel Store { get; set; }
         public SearchBoxesViewModel Brands { get; set; }
-        public SelectList CategoryOptions { get; internal set; }
+        public SelectList CategoryOptions { get;  set; }
+        public SelectList BoxOptions { get; set; }
         public SelectList StoreOptions { get; internal set; }
+        public SelectList StoreLongLat { get; set; }
 
     }
 
@@ -35,9 +37,9 @@ namespace BasketWebPanel.Areas.Dashboard.Models
         [Required(ErrorMessage = "Store Name is required")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Please select an Category")]
-        public int CategoryId { get; set; }
+        public int Category_Id { get; set; }
         [Required(ErrorMessage = "Please select an Brand")]
-        public int BrandId { get; set; }
+        public int Box_Id { get; set; }
         [Required(ErrorMessage = "Please select location from map")]
         public double Latitude { get; set; }
 
@@ -62,6 +64,7 @@ namespace BasketWebPanel.Areas.Dashboard.Models
         public double AverageRating { get; set; }
 
         public StoreDeliveryHoursViewModel StoreDeliveryHours { get; set; }
+        public string LongLats { get; set; }
 
     }
 

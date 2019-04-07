@@ -67,8 +67,12 @@
                                         <td style="vertical-align:middle">@Model.Users[i].FirstName @Model.Users[i].LastName</td>
                                         <td style="vertical-align:middle">@Model.Users[i].Email</td>
                                         <td style="vertical-align:middle">@Model.Users[i].Phone</td>
-                                        <td style="vertical-align:middle; "><img src="@ApiCall.BaseUrl@Model.Users[i].ProfilePictureUrl" style="height:35px;width:100px; max-height:35px;max-width:100px" class="normal" /></td>
-                                        <td class="centered" style="vertical-align:middle"><p data-placement="top" data-toggle="tooltip" style="margin:3px 0px 0px" title="" data-original-title="Edit"><button class="btn btn-primary btn-xs editButtons" data-title="Edit" data-boxid="@Model.Users[i].Id" data-toggle="modal"><i class="fa fa-print"></i></button></p></td>
+                                        <td style="vertical-align:middle; ">
+                                            <img src="@ApiCall.BaseUrl@Model.Users[i].ProfilePictureUrl" style="height:35px;width:100px; max-height:35px;max-width:100px" class="normal" />
+                                        </td>                                   <td class="centered" style="vertical-align:middle">
+                                                                                    <p data-placement="top" data-toggle="tooltip" style="margin:3px 0px 0px" title="" data-original-title="Edit">
+@if (@Model.Users[i].IsCard){<button class="btn btn-primary btn-xs editButtons" data-title="Edit" data-boxid="@Model.Users[i].Id" data-toggle="modal"><i class="fa fa-print"></i></button>}</p>
+</td>
 <td id="hdnUserStatusId_@i" data-userstatus="@Model.Users[i].IsDeleted">
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-success btn-sm dropdown-toggle" id="@("btnUserStatus_" + i)" data-toggle="dropdown" value="@Model.Users[i].IsDeleted" style="border-color:white" aria-haspopup="true" aria-expanded="false">

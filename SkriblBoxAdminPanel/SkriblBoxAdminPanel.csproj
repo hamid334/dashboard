@@ -207,6 +207,7 @@
     <Compile Include="Areas\Dashboard\Models\AddStoreViewModel.cs" />
     <Compile Include="Areas\Dashboard\Models\DashboardViewModel.cs" />
     <Compile Include="Areas\Dashboard\Models\OfferProdutcsViewModel.cs" />
+    <Compile Include="Areas\Dashboard\Models\SearchBoxesViewModel.cs" />
     <Compile Include="BindingModels\BoxBindingModel.cs" />
     <Compile Include="BindingModels\CategoriesBindingModel.cs" />
     <Compile Include="BindingModels\ChangeOrderStatusModel.cs" />
@@ -1077,6 +1078,7 @@
     <Content Include="Areas\Dashboard\Views\Admin\ManageSubAdmin.cshtml" />
     <Content Include="Areas\Dashboard\Views\CardRequest\Index.cshtml" />
     <Content Include="Areas\Dashboard\Views\CardRequest\ManageCardRequest.cshtml" />
+    <Content Include="Areas\Dashboard\Views\Users\MyCard.cshtml" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\CustomProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />

@@ -65,7 +65,7 @@ namespace BasketWebPanel.ViewModels
         public string StatusName { get; set; }
 
         public bool IsChecked { get; set; }
-
+        public bool IsCard { get; set; }
         public List<UserAddressBindingModel> UserAddresses;
 
         public List<UserPaymentCardBindingModel> PaymentCards { get; set; }

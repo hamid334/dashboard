@@ -242,14 +242,14 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
 
             if (UserID.HasValue)
             {
-                var response = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/User/GetCardDetails", User, null, true, false, null,"User_Id=" + UserID.Value));
+                var response = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/User/GetBulkCardDetails", User, null, true, false, null,"User_Id=" + UserID.Value));
 
 
                 if (response is Error || response == null) 
                     return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Internal Server Error");
                 else
-                    model = response.GetValue("Result").ToObject<RequestCardModel>();
-                model.User.FullName = model.User.FirstName + " " + model.User.LastName;
+                    model.RequestCard = response.GetValue("Result").ToObject<List<RequestCardModel>>();
+                //model.User.FullName = model.User.FirstName + " " + model.User.LastName;
                
                 // model.RequestCard= (RequestCardModel)response.GetValue("Result").ToObject<>();
 

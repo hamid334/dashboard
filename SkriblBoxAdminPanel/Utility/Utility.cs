@@ -2,6 +2,7 @@
 using BasketWebPanel.Models;
 using BasketWebPanel.ViewModels;
 using Microsoft.Owin.Security;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -300,18 +301,18 @@ namespace BasketWebPanel
 
         public static SelectList GetStoresOptions(IPrincipal User, string DefaultName = "", int? StoreId = null)
         {
-            if (DefaultName.ToLower() == "none")
-            {
-                var EmptyList = new List<SelectListItem>() {
-                    new SelectListItem{
-                        Selected = true,
-                        Text = "None",
-                        Value = ""
-                    }
-                };
+            //if (DefaultName.ToLower() == "none")
+            //{
+            //    var EmptyList = new List<SelectListItem>() {
+            //        new SelectListItem{
+            //            Selected = true,
+            //            Text = "None",
+            //            Value = ""
+            //        }
+            //    };
 
-                return new SelectList(EmptyList);
-            }
+            //    return new SelectList(EmptyList);
+            //}
             //try
             //{
             //    var responseStores = AsyncHelpers.RunSync<JObject>(() => ApiCall.CallApi("api/Store/GetAllStores", User, GetRequest: true));
@@ -340,7 +341,7 @@ namespace BasketWebPanel
             //    return null;
             //}
 
-
+           
 
 
             try
@@ -364,25 +365,42 @@ namespace BasketWebPanel
                     IEnumerable<SelectListItem> selectList;
                     if (StoreId.HasValue)
                     {
-                        selectList = from str in Stores
-                                     where str.Id != StoreId.Value
-                                     select new SelectListItem
-                                     {
-                                         Selected = false,
-                                         Text = str.Name,
-                                         Value = str.Id.ToString()
-                                     };
+                        selectList = //new[] { new SelectListItem
+                        //{
+                        //    Selected = false,
+                        //    Text = "All",
+                        //    Value ="-1"}
+                        //}.Concat(
+                        from str in Stores
+                                     // where str.Id != StoreId.Value
+                                 select new SelectListItem
+                                 {
+                                     Selected = str.Id == StoreId.Value ? true : false,
+                                     Text = str.Name,
+                                     Value = str.Id.ToString()
+                                 };
                     }
                     else
                     {
-                        selectList = from str in Stores
-                                     select new SelectListItem
-                                     {
-                                         Selected = false,
-                                         Text = str.Name,
-                                         Value = str.Id.ToString()
-                                     };
+                        selectList =
+                        //    new[] { new SelectListItem
+                        //{
+                        //    Selected = false,
+                        //    Text = "All",
+                        //    Value ="-1"}
+                        //}.Concat(
+                            from str in Stores
+                                                 select new SelectListItem
+                                                 {
+                                                     Selected = false,
+                                                     Text = str.Name,
+                                                     Value = str.Id.ToString()
+                                                 };
+                       
+                                     // new SelectListItem { Selected = true, Text = "All", Value = "-1" };
                     }
+                    
+                   // selectList = new SelectListItem { Selected = true, Text = "All", Value = "-1" };
                     return new SelectList(selectList);
                 }
 
@@ -393,7 +411,7 @@ namespace BasketWebPanel
             }
         }
 
-        public static SelectList GetBrandOptions(IPrincipal User, string DefaultName = "")
+        public static SelectList GetMerchantOptions(IPrincipal User, string DefaultName = "")
         {
             if (DefaultName.ToLower() == "none")
             {
@@ -594,13 +612,15 @@ namespace BasketWebPanel
                     if (CatId.HasValue)
                     {
                         selectList = from cat in responseCategories
-                                     where cat.Id != CatId.Value
+                                         // where cat.Id != CatId.Value
                                      select new SelectListItem
                                      {
-                                         Selected = false,
+                                         Disabled = true,
+                                         Selected = cat.Id == CatId.Value ? true : false,
                                          Text = cat.Name,
                                          Value = cat.Id.ToString()
                                      };
+
                     }
                     else
                     {
@@ -612,6 +632,7 @@ namespace BasketWebPanel
                                          Value = cat.Id.ToString()
                                      };
                     }
+
                     return new SelectList(selectList);
                 }
 
@@ -635,26 +656,29 @@ namespace BasketWebPanel
                 }
                 else
                 {
-                    var responseCategories = response.GetValue("Result").ToObject<CategoriesViewModel>().Categories;
+                    // var CategoriesViewModelgoriCategoriesJsonConvert.DeserializeObject<BoxViewModel>(response.ToString()).Boxes;
+
+                //    var responseCategories = response.GetValue("Result").ToObject<CategoriesViewModel>().Categories;
+                    var responseCategories = response.GetValue("Result").ToObject<SearchBoxesViewModel>().Boxes;
                     var tempCats = responseCategories.ToList();
 
-                    foreach (var cat in responseCategories)
-                    {
-                        cat.Name = cat.GetFormattedBreadCrumb(tempCats);
-                    }
+                    //foreach (var cat in responseCategories)
+                    //{
+                    //    cat.Name = cat.GetFormattedBreadCrumb(tempCats);
+                    //}
                     responseCategories = responseCategories.OrderBy(x => x.Name).ToList();
 
                     if (DefaultName != "")
-                        responseCategories.Insert(0, new CategoryBindingModel { Id = 0, Name = DefaultName });
+                        responseCategories.Insert(0, new Box { Id = 0, Name = DefaultName });
 
                     IEnumerable<SelectListItem> selectList;
                     if (CatId.HasValue)
                     {
                         selectList = from cat in responseCategories
-                                     where cat.Id != CatId.Value
+                                         // where cat.Id != CatId.Value
                                      select new SelectListItem
                                      {
-                                         Selected = false,
+                                         Selected = cat.Id == CatId.Value ? true : false,
                                          Text = cat.Name,
                                          Value = cat.Id.ToString()
                                      };
@@ -664,21 +688,19 @@ namespace BasketWebPanel
                         selectList = from cat in responseCategories
                                      select new SelectListItem
                                      {
-                                         Selected = false,
+                                         Selected = cat.Id == 0 ? true : false,
                                          Text = cat.Name,
                                          Value = cat.Id.ToString()
                                      };
                     }
                     return new SelectList(selectList);
                 }
-
             }
             catch (Exception ex)
             {
                 return null;
             }
         }
-
         public static HttpStatusCode LogError(Exception ex)
         {
             try
@@ -704,8 +726,6 @@ namespace BasketWebPanel
                 return HttpStatusCode.InternalServerError;
             }
         }
-
-
     }
 
     class Global

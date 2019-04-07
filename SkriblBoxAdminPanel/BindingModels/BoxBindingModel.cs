@@ -12,5 +12,11 @@ namespace BasketWebPanel.BindingModels
         public string Name { get; set; }
 
         public int Category_Id { get; set; }
+        
     }
+    public class BoxCategoreisView
+    {
+        public List<BoxBindingModel> Boxes {get;set;}
+    }
+  
 }

@@ -41,7 +41,7 @@
                             <div class="col-md-6 col-sm-6 col-xs-6">
                                 <div class="form-group form-inline  ">
                                     <label class="control-label" title="">Select Category</label>
-                                    <span class="ico-help" title="Search by a payment status"><i class="fa fa-question-circle"></i></span>
+                                    <span class="ico-help" title="Category of Merchant"><i class="fa fa-question-circle"></i></span>
                                     @Html.DropDownList("Category_Id", new SelectList(Model.Categories.Items,
 "value", "Text", Model.Categories.SelectedValue), new { @class = "form-control", @Id = "aioCategories" })
                                 </div>

@@ -90,7 +90,6 @@
             }
         }
     </style>
-
 </head>
 <body>
 
@@ -99,32 +98,32 @@
 
     <div class="wrapper">
         <button class="btn" onclick="window.print()"><i class="fas fa-print"></i></button>
-       @foreach (var item in Model.RequestCard)
-       {
-           if (item.User.Nationality == "Turkish")
-           {
-               <img src="@Url.Content("~/content/images/YesT.png")" alt="Snow" style="width:420px" />
-           }
-           else
-           {
-               <img src="@Url.Content("~/content/images/NonT.png")" alt="Snow" style="width:420px" />
-           }
-                <div class="container">
-                    <div class="Number"> @item.CardNumber</div>
-        @if (item.User.SignInType != -1)
+        @foreach (var item in Model.RequestCard)
         {
-            <div class="Sergey-Tretyak">@item.User.LastName @item.User.FirstName</div>
+            if (item.User.Nationality == "Turkish")
+            {
+                <img src="@Url.Content("~/content/images/YesT.png")" alt="Snow" style="width:420px" />
+            }
+            else
+            {
+                <img src="@Url.Content("~/content/images/NonT.png")" alt="Snow" style="width:420px" />
+            }
+            <div class="container">
+                <div class="Number"> @item.CardNumber</div>
+                @if (item.User.SignInType != -1)
+                {
+                    <div class="Sergey-Tretyak">@item.User.LastName @item.User.FirstName</div>
 
+                }
+                else
+                { <div class="Sergey-Tretyak"></div>
+                }
+                @*<div class="Sergey-Tretyak">@Model.User.FullName</div>*@
+                <div class="Date">@Convert.ToDateTime(item.ExpiryDate).Month.ToString()/@Convert.ToDateTime(item.ExpiryDate).Year.ToString()</div>
+                <div class="THRU">THRU</div>
+                <div class="VALID">VALID</div>
+            </div><br />
         }
-        else
-        { <div class="Sergey-Tretyak"></div>
-        }
-                     @*<div class="Sergey-Tretyak">@Model.User.FullName</div>*@
-                    <div class="Date">@Convert.ToDateTime(item.ExpiryDate).Month.ToString()/@Convert.ToDateTime(item.ExpiryDate).Year.ToString()</div>
-                    <div class="THRU">THRU</div>
-                    <div class="VALID">VALID</div>
-                </div><br />
-       }
     </div>
 </body>
 </html>

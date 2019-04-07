@@ -129,18 +129,21 @@
                         @Html.HiddenFor(x => x.City.Id)
 
                     <div class="col-md-12 col-sm-12">
-                        <label>Category Name</label>
-                        <input type="text" autofocus data-val="true" class="form-control input-validation-error" name="City.CityName" id="CategoryName" data-val-required="This field is required" placeholder="City Name" value="@Model.City.CityName">
+                        <label>City Name</label>
+                        <input type="text" readonly autofocus data-val="true" class="form-control input-validation-error" name="City.CityName" id="CategoryName" data-val-required="This field is required" placeholder="City Name" value="@Model.City.CityName">
                         @Html.ValidationMessageFor(m => m.City.CityName, "", new { @class = "text-danger" })
                     </div>
 
 
                     <div class="col-md-12 col-sm-12">
-                        <label>Branch Location</label>
-                        <div id="map" class="form-control"></div>
+                        <label>City Location</label>
+                        <div id="map" class="form-control">
+
+                        </div>
                         <div class="row">
-                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                             <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                                 <label>Longitude</label>
+                             
                                 @Html.TextBoxFor(x => x.City.Longitude, new { @id = "Longitude", @class = "form-control", @readonly = "true", @placeholder = "Longitude" })
                                 @Html.ValidationMessageFor(x => x.City.Longitude, "", new { @class = "text-danger" })
                             </div>
@@ -162,7 +165,7 @@
                         <div class="pac-card col-lg-7 col-sm-12" style="padding-right:0px; padding-left:0px" id="pac-card">
                             <div>
                                 <div id="title">
-                                    Store Location
+                                    City Location
                                 </div>
                                 <div id="type-selector" class="pac-controls">
                                     <input type="radio" name="type" id="changetype-all" checked="checked">
@@ -247,7 +250,7 @@
         map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
 
         var autocomplete = new google.maps.places.Autocomplete(input);
-
+      
         // Bind the map's bounds (viewport) property to the autocomplete object,
         // so that the autocomplete requests use the current map bounds for the
         // bounds option in the request.
@@ -333,6 +336,7 @@
             $("#Latitude").val(place.geometry.location.lat());
             $('#Latitude').trigger('change');
             $('#Longitude').trigger('change');
+            $("#CategoryName").val($("#pac-input").val());
         });
 
         // Sets a listener on a radio button to change the filter type on Places
@@ -373,10 +377,13 @@
                 }
                 $("#Longitude").val(pos.lng);
                 $("#Latitude").val(pos.lat);
+               
+
             }, function () {
                 handleLocationError(true, infoWindow, map.getCenter());
             });
         }
+       
     }
 
 

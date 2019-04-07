@@ -10,8 +10,12 @@ namespace BasketWebPanel.BindingModels
     {
         public List<RequestCardModel> RequestCard { get; set; }
     }
-    public class RequestCardModel
+    public class RequestCardModel 
     {
+        public RequestCardModel()
+        {
+            RequestCard = new List<RequestCardModel>();
+        }
         public List<RequestCardModel> RequestCard { get; set; }
         public int Id { get; set; }
         public string DeliveryAddress { get; set; }
@@ -53,6 +57,8 @@ namespace BasketWebPanel.BindingModels
         public string Email { get; set; }
 
         public string Phone { get; set; }
+
+        public short? SignInType { get; set; }
 
         public string Nationality { get; set; }
 

@@ -43,11 +43,11 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
 
                 }
             }
-
-            //Providing CategoryList
-            model.CategoryOptions = Utility.GetCategoryOptions(User, "None");
-            model.StoreOptions = Utility.GetBrandOptions(User, "None");
-
+            model.CategoryOptions = Utility.GetCategoryOptions(User, "None",model.Store.Category_Id);
+            model.StoreOptions = Utility.GetBrandOptions(User, "None", model.Store.Box_Id);
+            //model.BoxOptions = Utility.GetBrandOptions(User, "None", model.Store.Box_Id);
+            //model.Brands.Box.Id=
+            model.StoreId = model.Store.Box_Id;
             return View(model);
         }
 
@@ -77,72 +77,87 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(AddStoreViewModel model)
         {
-            model.Store.Description = model.Store.Description ?? "";
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            MultipartFormDataContent content;
-            bool FileAttached = (Request.RequestContext.HttpContext.Session["AddStoreImage"] != null);
-            bool ImageDeletedOnEdit = false;
-            var imgDeleteSessionValue = Request.RequestContext.HttpContext.Session["ImageDeletedOnEdit"];
-            if (imgDeleteSessionValue != null)
-            {
-                ImageDeletedOnEdit = Convert.ToBoolean(imgDeleteSessionValue);
-            }
-            byte[] fileData = null;
-            var ImageFile = (HttpPostedFileWrapper)Request.RequestContext.HttpContext.Session["AddStoreImage"];
-            if (FileAttached)
-                using (var binaryReader = new BinaryReader(ImageFile.InputStream))
-                {
-                    fileData = binaryReader.ReadBytes(ImageFile.ContentLength);
-                }
-
+            //model.StoreOptions = 1;
+            //model.CategoryOptions=
+            var lnglats = Convert.ToString(Request.Form["LongLat"].ToString()).Split(';').ToList();
+            var CityNameLoc = Convert.ToString(Request.Form["CityNameLoc"].ToString()).Split(';').ToList();
             ByteArrayContent fileContent;
-            JObject response;
+            JObject response=null;
+            MultipartFormDataContent content;
 
             bool firstCall = true;
-            callAgain: content = new MultipartFormDataContent();
-            if (FileAttached)
+            CityController ct = new CityController();
+            
+            foreach (var item in lnglats)
             {
-                fileContent = new ByteArrayContent(fileData);
-                fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = ImageFile.FileName };
-                content.Add(fileContent);
-            }
-            if (model.Store.Id > 0)
-            {
-                content.Add(new StringContent(model.Store.Id.ToString()), "Id");
-            }
-            content.Add(new StringContent(model.Store.Name), "StoreName");
-            content.Add(new StringContent(Convert.ToString(model.Store.CategoryId)), "CategoryId");
-            content.Add(new StringContent(Convert.ToString(model.Store.BrandId)), "BrandId");
-            content.Add(new StringContent(model.Store.Latitude.ToString()), "Lat");
-            content.Add(new StringContent(model.Store.Longitude.ToString()), "Long");
-            content.Add(new StringContent(model.Store.Open_From.ToString()), "Open_From");
-            content.Add(new StringContent(model.Store.Open_To.ToString()), "Open_To");
-            content.Add(new StringContent(Convert.ToString(model.Store.Description)), "Description");
-            content.Add(new StringContent(Convert.ToString(model.Store.Address)), "Address");
-            content.Add(new StringContent(Convert.ToString(ImageDeletedOnEdit)), "ImageDeletedOnEdit");
-            var packageProducts = JsonConvert.SerializeObject(model.Store.StoreDeliveryHours);
+                if (item != "")
+                {
+                    model.Store.Name = Convert.ToString(item.Split('*')[0]);
+                    model.Store.Latitude = Convert.ToDouble(item.Split('*')[1]);
+                    model.Store.Longitude = Convert.ToDouble(item.Split('*')[2]);
+                    model.Store.Description = model.Store.Description ?? "";
+                    if (!ModelState.IsValid)
+                    {
+                        return View(model);
+                    }
+
+                    bool FileAttached = (Request.RequestContext.HttpContext.Session["AddStoreImage"] != null);
+                    bool ImageDeletedOnEdit = false;
+                    var imgDeleteSessionValue = Request.RequestContext.HttpContext.Session["ImageDeletedOnEdit"];
+                    if (imgDeleteSessionValue != null)
+                    {
+                        ImageDeletedOnEdit = Convert.ToBoolean(imgDeleteSessionValue);
+                    }
+                    byte[] fileData = null;
+                    var ImageFile = (HttpPostedFileWrapper)Request.RequestContext.HttpContext.Session["AddStoreImage"];
+                    if (FileAttached)
+                        using (var binaryReader = new BinaryReader(ImageFile.InputStream))
+                        {
+                            fileData = binaryReader.ReadBytes(ImageFile.ContentLength);
+                        }
 
 
-            var buffer = System.Text.Encoding.UTF8.GetBytes(packageProducts);
-            var byteContent = new ByteArrayContent(buffer);
-            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            content.Add(byteContent, "StoreDeliveryHours");
+                    callAgain: content = new MultipartFormDataContent();
+                    if (FileAttached)
+                    {
+                        fileContent = new ByteArrayContent(fileData);
+                        fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = ImageFile.FileName };
+                        content.Add(fileContent);
+                    }
+                    if (model.Store.Id > 0)
+                    {
+                        content.Add(new StringContent(model.Store.Id.ToString()), "Id");
+                    }
+                    content.Add(new StringContent(model.Store.Name), "StoreName");
+                    content.Add(new StringContent(Convert.ToString(model.Store.Category_Id)), "CategoryId");
+                    content.Add(new StringContent(Convert.ToString(model.Store.Box_Id)), "BrandId");
+                    content.Add(new StringContent(model.Store.Latitude.ToString()), "Lat");
+                    content.Add(new StringContent(model.Store.Longitude.ToString()), "Long");
+                    content.Add(new StringContent(model.Store.Open_From.ToString()), "Open_From");
+                    content.Add(new StringContent(model.Store.Open_To.ToString()), "Open_To");
+                    content.Add(new StringContent(Convert.ToString(model.Store.Description)), "Description");
+                    content.Add(new StringContent(Convert.ToString(model.Store.Address)), "Address");
+                    content.Add(new StringContent(Convert.ToString(ImageDeletedOnEdit)), "ImageDeletedOnEdit");
+                    var packageProducts = JsonConvert.SerializeObject(model.Store.StoreDeliveryHours);
 
-            response = await ApiCall.CallApi("api/Admin/AddStore", User, isMultipart: true, multipartContent: content);
-            if (firstCall && Convert.ToString(response).Contains("UnAuthorized"))
-            {
-                firstCall = false;
-                goto callAgain;
-            }
-            else if (Convert.ToString(response).Contains("UnAuthorized"))
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "UnAuthorized Error");
-            }
 
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(packageProducts);
+                    var byteContent = new ByteArrayContent(buffer);
+                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    content.Add(byteContent, "StoreDeliveryHours");
+
+                    response = await ApiCall.CallApi("api/Admin/AddStore", User, isMultipart: true, multipartContent: content);
+                    if (firstCall && Convert.ToString(response).Contains("UnAuthorized"))
+                    {
+                        firstCall = false;
+                        goto callAgain;
+                    }
+                    else if (Convert.ToString(response).Contains("UnAuthorized"))
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "UnAuthorized Error");
+                    }
+                }
+            }
             if (response is Error)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, (response as Error).ErrorMessage);
@@ -157,9 +172,34 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
                     else
                         TempData["SuccessMessage"] = "The store has been added successfully.";
                 }
+                foreach (var item in CityNameLoc)
+                {
+                    CityContainer city = new CityContainer();
+                    city.City.CityName = Convert.ToString(item.Split('*')[0]);
+                    city.City.Latitude = Convert.ToDouble(item.Split('*')[1]);
+                    city.City.Longitude = Convert.ToDouble(item.Split('*')[2]);
+                    var cityresponse = await ApiCall.CallApi("api/Admin/AddCity", User, city.City);
+                    if (cityresponse.ToString().Contains("UnAuthorized"))
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, (cityresponse as Error).ErrorMessage);
+                    }
+                    else if (cityresponse.ToString().Contains("UnAuthorized"))
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "UnAuthorized Error");
+                    }
 
+                    if (cityresponse is Error)
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, (cityresponse as Error).ErrorMessage);
+                    }
+                    else
+                    {
+
+                    }
+                }
                 return Json(new { success = true, responseText = "Success" }, JsonRequestBehavior.AllowGet);
             }
+
         }
 
 

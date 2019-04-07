@@ -10,9 +10,9 @@ namespace BasketWebPanel.BindingModels
         public string Name { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
-        [Range(1, 10000, ErrorMessage = "Please enter a valid price")]
+        [Range(0, 10000, ErrorMessage = "Please enter a valid price")]
         [RegularExpression(MyRegularExpressions.Price, ErrorMessage = "Please enter a valid price")]
-        public double? Price { get; set; }
+        public double Price { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
         public string Description { get; set; }
@@ -34,7 +34,7 @@ namespace BasketWebPanel.BindingModels
         public double DiscountPrice { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
-        public double DiscountPercentage { get; set; }
+        public double? DiscountPercentage { get; set; }
 
         public string Size { get; set; }
 
@@ -42,6 +42,6 @@ namespace BasketWebPanel.BindingModels
 
         public virtual StoreBindingModel Store { get; set; }
 
-
+        public int BoxId { get; set; }
     }
 }
