@@ -64,7 +64,7 @@ namespace BasketWebPanel.Areas.Dashboard.Models
         public double AverageRating { get; set; }
 
         public StoreDeliveryHoursViewModel StoreDeliveryHours { get; set; }
-        public string LongLats { get; set; }
+        public string StoreCity { get; set; }
 
     }
 

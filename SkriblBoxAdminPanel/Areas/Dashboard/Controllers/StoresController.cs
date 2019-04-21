@@ -79,23 +79,23 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
         {
             //model.StoreOptions = 1;
             //model.CategoryOptions=
-            var lnglats = Convert.ToString(Request.Form["LongLat"].ToString()).Split(';').ToList();
-            var CityNameLoc = Convert.ToString(Request.Form["CityNameLoc"].ToString()).Split(';').ToList();
+            //var lnglats = Convert.ToString(Request.Form["LongLat"].ToString()).Split(';').ToList();
+            //var CityNameLoc = Convert.ToString(Request.Form["CityNameLoc"].ToString()).Split(';').ToList();
             ByteArrayContent fileContent;
             JObject response=null;
             MultipartFormDataContent content;
 
             bool firstCall = true;
-            CityController ct = new CityController();
+            //CityController ct = new CityController();
             
-            foreach (var item in lnglats)
-            {
-                if (item != "")
-                {
-                    model.Store.Name = Convert.ToString(item.Split('*')[0]);
-                    model.Store.Latitude = Convert.ToDouble(item.Split('*')[1]);
-                    model.Store.Longitude = Convert.ToDouble(item.Split('*')[2]);
-                    model.Store.Description = model.Store.Description ?? "";
+            //foreach (var item in lnglats)
+            //{
+            //    if (item != "")
+            //    {
+                    //model.Store.Name = Convert.ToString(item.Split('*')[0]);
+                    //model.Store.Latitude = Convert.ToDouble(item.Split('*')[1]);
+                    //model.Store.Longitude = Convert.ToDouble(item.Split('*')[2]);
+                    //model.Store.Description = model.Store.Description ?? "";
                     if (!ModelState.IsValid)
                     {
                         return View(model);
@@ -145,8 +145,17 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
                     var byteContent = new ByteArrayContent(buffer);
                     byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                     content.Add(byteContent, "StoreDeliveryHours");
+            //MultipartFormDataContent citycontent;
+            //citycontent.Add(new StringContent(Convert.ToString(model.Store.StoreCity)), "CityName");
+            //citycontent.Add(new StringContent(Convert.ToString(model.Store.StoreCity)), "CityName");
+            //citycontent.Add(new StringContent(Convert.ToString(model.Store.StoreCity)), "CityName");
+            CityContainer city = new CityContainer();
+            city.City.CityName = Convert.ToString(model.Store.StoreCity);
+            city.City.Latitude = Convert.ToDouble(model.Store.Latitude);
+            city.City.Longitude = Convert.ToDouble(model.Store.Longitude);
+            response = await ApiCall.CallApi("api/Admin/AddCity", User, city.City);
 
-                    response = await ApiCall.CallApi("api/Admin/AddStore", User, isMultipart: true, multipartContent: content);
+            response = await ApiCall.CallApi("api/Admin/AddStore", User, isMultipart: true, multipartContent: content);
                     if (firstCall && Convert.ToString(response).Contains("UnAuthorized"))
                     {
                         firstCall = false;
@@ -156,8 +165,8 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
                     {
                         return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "UnAuthorized Error");
                     }
-                }
-            }
+            //    }
+            //}
             if (response is Error)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, (response as Error).ErrorMessage);
@@ -172,7 +181,7 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
                     else
                         TempData["SuccessMessage"] = "The store has been added successfully.";
                 }
-                foreach (var item in CityNameLoc)
+                /*foreach (var item in CityNameLoc)
                 {
                     CityContainer city = new CityContainer();
                     city.City.CityName = Convert.ToString(item.Split('*')[0]);
@@ -196,7 +205,7 @@ namespace BasketWebPanel.Areas.Dashboard.Controllers
                     {
 
                     }
-                }
+                }*/
                 return Json(new { success = true, responseText = "Success" }, JsonRequestBehavior.AllowGet);
             }
 
